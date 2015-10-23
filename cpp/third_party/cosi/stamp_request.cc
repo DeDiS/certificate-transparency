@@ -8,34 +8,38 @@
 #include <unistd.h>
 #include <string>
 #include <arpa/inet.h>
+#include "third_party/cosi/stamp_request.h"
+#include "proto/serializer.h"
+
 
 namespace Cosi{
-  using std;
+  using namespace std;
 
   string json_request = "{\"ReqNo\":0,\"Type\":1,\"Srep\":null,\"Sreq\":{\"Val\":\"";
   string json_request_end = "\"}}";
   string json_close = "{\"ReqNo\":1,\"Type\":3}\n";
 
-  int connectTo(char *host, int port);
+  int connectTo(const string host, int port);
   int writeString(int m_sock, string msg);
   char *readString(int m_sock);
   char *HexToBytes(const string& hex);
-  string requestSignature(char *host, int port);
+  string requestSignature(const string host, int port, const string msg);
 
   #define MAXRECV 1024
 
-  string SignTreeHead(SignedTreeHead* sth){
+  string SignTreeHead(ct::SignedTreeHead* sth){
+    cout << "Asking to sign tree head\n";
     string serialized_sth;
     Serializer::SerializeResult res =
     Serializer::SerializeSTHSignatureInput(*sth, &serialized_sth);
-    if (res != Serializer::OK) return GetSerializeError(res);
+    if (res != Serializer::OK) return "error";
 
     return requestSignature("localhost", 2021, serialized_sth);
   }
 
   // Requests a signature from the stamp-server at host:port - returns NULL if
   // not successful or the string with the JSON-representation of the signature
-  string requestSignature(char *host, int port, string msg ){
+  string requestSignature(const string host, int port, const string msg ){
     int m_sock = connectTo(host, port);
     if ( m_sock < 0 ){
       cout << "Connection error\n";
@@ -60,7 +64,7 @@ namespace Cosi{
     return signature;
   }
 
-  int connectTo(char *host, int port){
+  int connectTo(const string host, int port){
     sockaddr_in m_addr;
     int m_sock = socket ( AF_INET, SOCK_STREAM, 0 );
 
@@ -79,7 +83,7 @@ namespace Cosi{
     m_addr.sin_family = AF_INET;
     m_addr.sin_port = htons ( port );
 
-    int status = inet_pton ( AF_INET, host, &m_addr.sin_addr );
+    int status = inet_pton ( AF_INET, host.c_str(), &m_addr.sin_addr );
 
     if ( errno == EAFNOSUPPORT ) return -1;
 
