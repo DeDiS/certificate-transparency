@@ -1,0 +1,13 @@
+#!/bin/bash -e
+PACKAGES="gflags glog protobuf json-c automake pkg-config libevent leveldb"
+
+if [ ! "$( which brew )" ]; then
+  echo Please install 'brew' first!
+  echo 'ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+  echo
+  exit 1
+fi
+
+for p in $PACKAGES; do
+  brew install $p
+done
