@@ -16,7 +16,7 @@
 #include "proto/serializer.h"
 #include "util/status.h"
 #include "util/util.h"
-#include "third_party/cosi/stam_request.h"
+#include "third_party/cosi/stamp_request.h"
 
 
 namespace cert_trans {

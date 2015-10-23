@@ -97,7 +97,8 @@ TESTS = \
 	cpp/util/libevent_wrapper_test \
 	cpp/util/masterelection_test \
 	cpp/util/sync_task_test \
-	cpp/util/task_test
+	cpp/util/task_test \
+	cpp/third_party/cosi/stamp_request_test
 
 all-local:
 	$(MAKE) -C python
@@ -163,6 +164,7 @@ cpp_libcore_a_SOURCES = \
 	cpp/net/connection_pool.cc \
 	cpp/net/url.cc \
 	cpp/net/url_fetcher.cc \
+	cpp/third_party/cosi/stamp_request.cc \
 	cpp/third_party/curl/hostcheck.c \
 	cpp/third_party/isec_partners/openssl_hostname_validation.c \
 	cpp/util/etcd.cc \
