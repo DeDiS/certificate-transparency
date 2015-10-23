@@ -13,8 +13,14 @@
 using namespace std;
 
 int main(){
-  std::cout << "hello\n";
   string test;
-  test = Cosi::requestSignature("localhost", 2021, "test" );
-  return -1;
+  cout << "Requesting signature\n";
+  cout << Cosi::requestSignature("78.46.227.60", 2001, "test" );
+
+  ct::SignedTreeHead sth;
+  sth.set_timestamp(1000);
+  cout << "Asking STH to be signed\n";
+  cout << Cosi::SignTreeHead( &sth );
+  cout << "Signature received\n";
+  return 0;
 }

@@ -34,27 +34,34 @@ namespace Cosi{
     Serializer::SerializeSTHSignatureInput(*sth, &serialized_sth);
     if (res != Serializer::OK) return "error";
 
-    return requestSignature("localhost", 2021, serialized_sth);
+    return requestSignature("78.46.227.60", 2001, serialized_sth);
   }
 
   // Requests a signature from the stamp-server at host:port - returns NULL if
   // not successful or the string with the JSON-representation of the signature
-  string requestSignature(const string host, int port, const string msg ){
+  std::string requestSignature(const std::string host, int port, const std::string msg ){
     int m_sock = connectTo(host, port);
     if ( m_sock < 0 ){
       return NULL;
     }
 
+    cout << "Sending json\n";
     string request = json_request + msg + json_request_end;
     if ( writeString(m_sock, request) < 0 ){
+      cout << "Sending error\n";
       return NULL;
     }
+
+    cout << "Waiting for string\n";
 
     string signature = readString(m_sock);;
 
+    cout << "Sending stop\n";
     if ( writeString(m_sock, json_close) < 0 ){
       return NULL;
     }
+
+    cout << "Returning signature " << signature << "\n";
     return signature;
   }
 

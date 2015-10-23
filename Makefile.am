@@ -727,6 +727,27 @@ cpp_util_task_test_LDADD = \
 cpp_util_task_test_SOURCES = \
 	cpp/util/task_test.cc
 
+cpp_third_party_cosi_stamp_request_test_LDADD = \
+	cpp/libcore.a \
+	cpp/libtest.a \
+	$(json_c_LIBS) \
+	$(libevent_LIBS) \
+	$(leveldb_LIBS) \
+	-lprotobuf -lsqlite3
+
+cpp_third_party_cosi_stamp_request_test_SOURCES = \
+	cpp/third_party/cosi/stamp_request_test.cc \
+	cpp/third_party/cosi/stamp_request.cc \
+	cpp/client/async_log_client.cc \
+	cpp/fetcher/remote_peer.cc \
+	cpp/log/test_signer.cc \
+	cpp/proto/serializer.cc \
+	cpp/util/json_wrapper.cc \
+	cpp/util/libevent_wrapper.cc \
+	cpp/util/periodic_closure.cc \
+	cpp/util/protobuf_util.cc \
+	cpp/util/util.cc
+
 cpp_util_thread_pool_test_LDADD = \
 	cpp/libcore.a \
 	cpp/libtest.a \
