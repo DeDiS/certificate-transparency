@@ -23,6 +23,7 @@ namespace Cosi{
   int writeString(int m_sock, string msg);
   char *readString(int m_sock);
   char *HexToBytes(const string& hex);
+  char *BytesToHex(const string& bytes);
   string requestSignature(const string host, int port, const string msg);
 
   #define MAXRECV 1024
@@ -39,22 +40,25 @@ namespace Cosi{
 
   // Requests a signature from the stamp-server at host:port - returns NULL if
   // not successful or the string with the JSON-representation of the signature
-  std::string requestSignature(const std::string host, int port, const std::string msg ){
+  std::string requestSignature(const std::string host, int port, const std::string msg2 ){
     int m_sock = connectTo(host, port);
     if ( m_sock < 0 ){
       return NULL;
     }
 
-    cout << "Sending json\n";
+    char *msg = BytesToHex(msg2);
+    cout << "Sending json with message2: " << msg << "\n";
     string request = json_request + msg + json_request_end;
     if ( writeString(m_sock, request) < 0 ){
       cout << "Sending error\n";
       return NULL;
     }
+    free(msg);
 
     cout << "Waiting for string\n";
 
-    string signature = readString(m_sock);;
+    string signature = readString(m_sock);
+    cout << "Got signature " << signature << "\n";
 
     cout << "Sending stop\n";
     if ( writeString(m_sock, json_close) < 0 ){
@@ -126,5 +130,15 @@ namespace Cosi{
     }
 
     return bytes;
+  }
+
+  char *BytesToHex(const string& bytes) {
+    char *hex = (char*) malloc(bytes.size() * 2) + 1;
+
+    for (unsigned int i = 0; i < bytes.size(); i++) {
+      sprintf(&hex[i * 2], "%02X", bytes[i]);
+    }
+    hex[2 * bytes.size()] = 0;
+    return hex;
   }
 }

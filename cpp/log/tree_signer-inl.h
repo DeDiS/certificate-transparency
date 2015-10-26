@@ -323,6 +323,7 @@ void TreeSigner<Logged>::TimestampAndSign(uint64_t min_timestamp,
 
   // Cosi-extension: ask for a collective signature on our STH
   sth->set_cosi_signature(Cosi::SignTreeHead(sth));
+  VLOG(1) << "Signing cosi_signature done:" << sth->cosi_signature() << " - " << sth->sha256_root_hash();
 }
 
 

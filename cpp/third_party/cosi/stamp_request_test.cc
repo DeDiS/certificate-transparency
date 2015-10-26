@@ -15,7 +15,7 @@ using namespace std;
 int main(){
   string test;
   cout << "Requesting signature\n";
-  cout << Cosi::requestSignature("78.46.227.60", 2001, "test" );
+  cout << Cosi::requestSignature("78.46.227.60", 2001, " 0 1 0 0 150FFFFFF56 0 0 0 0 0 0 0 0FFFFFF42FFFF1C14FFFFFFFFFF6FFF2427FF41FF64FFFF4CFFFFFF1B7852FF55" );
 
   ct::SignedTreeHead sth;
   sth.set_timestamp(1000);
