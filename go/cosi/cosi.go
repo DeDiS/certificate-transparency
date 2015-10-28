@@ -7,9 +7,9 @@ import (
 	"errors"
 	"flag"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
-	"io/ioutil"
 
 	"github.com/dedis/cothority/app/conode/defs"
 	"github.com/dedis/cothority/lib/app"
@@ -21,13 +21,16 @@ import (
 	"github.com/google/certificate-transparency/go/client"
 )
 
-var logUri = flag.String("log_uri", "http://ct.googleapis.com/aviator", "CT log base URI")
+// The base url is http://ct.googleapis.com/aviator
+var logUri = flag.String("log_uri", "http://localhost:8888", "CT log base URI")
 var dump = flag.Bool("dump", false, "Dump request to uri")
 
 var public abstract.Point
 
 func main() {
-	ReadConf()
+	flag.Parse()
+
+  dbg.Print("loguri is ", *logUri)
 	logClient := client.New(*logUri)
 	STH, err := logClient.GetSTH()
 	if err != nil {
@@ -36,13 +39,16 @@ func main() {
 	dbg.Printf("STH is %+v", STH)
 
 	if *dump {
+		dbg.Print("Dumping STH\n")
 		ioutil.WriteFile("test_sth_cosi.json", []byte(STH.CosiSignature), 0660)
 		ioutil.WriteFile("test_sth_sha256.json",
 			[]byte(STH.SHA256RootHash.Base64String()), 0660)
 	} else {
+		ReadConf()
+
 		sig, err := JSONtoSignature(STH.CosiSignature)
-		dbg.Printf("signature is %+v - error: &s\n", sig, err)
-		//VerifySignature(c.Args().First(), c.String("sig"))
+		dbg.Printf("signature is %+v - error: %s\n", sig, err)
+		//verifySignature()
 	}
 }
 
@@ -51,12 +57,10 @@ func SetSuite(suiteStr string) {
 }
 
 func ReadConf() {
-	flag.Parse()
-
 	conf = new(app.ConfigConode)
 	err := app.ReadTomlConfig(conf, "config.toml")
 	if err != nil {
-		dbg.Fatal("Couldn't load config-fiel")
+		dbg.Fatal("Couldn't load config-file")
 	}
 	SetSuite(conf.Suite)
 	public, _ = cliutils.ReadPub64(suite, strings.NewReader(conf.AggPubKey))

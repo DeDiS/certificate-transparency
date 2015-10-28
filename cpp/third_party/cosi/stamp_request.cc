@@ -28,15 +28,15 @@ namespace Cosi{
   string requestSignature(const string host, int port, const string msg);
 
   #define MAXRECV 1024
-  #define HOST "localhost"
+  #define HOST "127.0.0.1"
   #define PORT 2011
   #define HOST_P "78.46.227.60"
-  #define PORT_P 2001
+  #define PORT_P 2011
 
   string SignTreeHead(ct::SignedTreeHead* sth){
     cout << "Asking to sign tree head\n";
-    string host = HOST_P;
-    int port = PORT_P;
+    string host = HOST;
+    int port = PORT;
     return requestSignature(host, port, sth->sha256_root_hash());
   }
 
@@ -49,8 +49,8 @@ namespace Cosi{
     }
 
     cout << "Binary message " << BytesToHex((const unsigned char*)msg2.c_str(), msg2.length()) << "\n";
-    //string msg = util::ToBase64(msg2);
-    string msg = "test";
+    string msg = util::ToBase64(msg2);
+    //string msg = "test";
     cout << "Sending json with message2: " << msg << "\n";
     string request = json_request + msg + json_request_end;
     cout << "Request is: " << request << "\n";
@@ -95,7 +95,7 @@ namespace Cosi{
 
     if ( errno == EAFNOSUPPORT ) return -1;
 
-    cout << "Going to connect\n";
+    cout << "Going to connect to " << host << "\n";
     status = ::connect ( m_sock, ( sockaddr * ) &m_addr, sizeof ( m_addr ) );
     cout << "Connected\n";
 
