@@ -18,10 +18,6 @@ import (
 var logUri = flag.String("log_uri", "http://localhost:8888", "CT log base URI")
 var dump = flag.Bool("dump", false, "Dump request to uri")
 
-func init() {
-	flag.IntVar(&dbg.DebugVisible, "debug", dbg.DebugVisible, "0 is silence and 5 is spam")
-}
-
 // Our crypto-suite used in the program
 var suite abstract.Suite
 
@@ -57,7 +53,13 @@ func main() {
 		}
 		dbg.Lvlf2("Reply is %+v", reply)
 		dbg.Lvlf2("SHA256 of STH is %+v", STH.SHA256RootHash)
-		conode.VerifySignature(suite, reply, public, STH.SHA256RootHash[:])
+		if conode.VerifySignature(suite, reply, public, STH.SHA256RootHash[:]){
+			dbg.Lvl1("Successfully received STH with hash", STH.SHA256RootHash[:])
+			dbg.Lvl1("and checked conode-signature to be OK")
+		} else {
+			dbg.Lvl1("STH with hash", STH.SHA256RootHash, "didn't verify conode-signature.")
+			dbg.Lvl1("Perhaps wrong config.toml?")
+		}
 	}
 }
 
