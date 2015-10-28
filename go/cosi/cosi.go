@@ -51,8 +51,8 @@ func main() {
 		if err != nil{
 			dbg.Fatal("Couldn't convert CosiSignature", err)
 		}
-		dbg.Lvlf2("Reply is %+v", reply)
-		dbg.Lvlf2("SHA256 of STH is %+v", STH.SHA256RootHash)
+		dbg.Lvlf3("Reply is %+v", reply)
+		dbg.Lvlf3("SHA256 of STH is %+v", STH.SHA256RootHash)
 		if conode.VerifySignature(suite, reply, public, STH.SHA256RootHash[:]){
 			dbg.Lvl1("Successfully received STH with hash", STH.SHA256RootHash[:])
 			dbg.Lvl1("and checked conode-signature to be OK")
