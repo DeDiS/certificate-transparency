@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include "third_party/cosi/stamp_request.h"
 #include "proto/serializer.h"
+#include "util/json_wrapper.h"
 
 
 namespace Cosi{
@@ -27,15 +28,16 @@ namespace Cosi{
   string requestSignature(const string host, int port, const string msg);
 
   #define MAXRECV 1024
+  #define HOST "localhost"
+  #define PORT 2011
+  #define HOST_P "78.46.227.60"
+  #define PORT_P 2001
 
   string SignTreeHead(ct::SignedTreeHead* sth){
     cout << "Asking to sign tree head\n";
-    string serialized_sth;
-    Serializer::SerializeResult res =
-    Serializer::SerializeSTHSignatureInput(*sth, &serialized_sth);
-    if (res != Serializer::OK) return "error";
-
-    return requestSignature("78.46.227.60", 2001, serialized_sth);
+    string host = HOST_P;
+    int port = PORT_P;
+    return requestSignature(host, port, sth->sha256_root_hash());
   }
 
   // Requests a signature from the stamp-server at host:port - returns NULL if
@@ -46,14 +48,16 @@ namespace Cosi{
       return NULL;
     }
 
-    char *msg = BytesToHex(msg2);
+    cout << "Binary message " << BytesToHex((const unsigned char*)msg2.c_str(), msg2.length()) << "\n";
+    //string msg = util::ToBase64(msg2);
+    string msg = "test";
     cout << "Sending json with message2: " << msg << "\n";
     string request = json_request + msg + json_request_end;
+    cout << "Request is: " << request << "\n";
     if ( writeString(m_sock, request) < 0 ){
       cout << "Sending error\n";
       return NULL;
     }
-    free(msg);
 
     cout << "Waiting for string\n";
 
@@ -87,10 +91,13 @@ namespace Cosi{
     m_addr.sin_port = htons ( port );
 
     int status = inet_pton ( AF_INET, host.c_str(), &m_addr.sin_addr );
+    //int status = inet_pton ( AF_INET, "localhost", &m_addr.sin_addr );
 
     if ( errno == EAFNOSUPPORT ) return -1;
 
+    cout << "Going to connect\n";
     status = ::connect ( m_sock, ( sockaddr * ) &m_addr, sizeof ( m_addr ) );
+    cout << "Connected\n";
 
     if ( status < 0 ){
       return -1;
@@ -132,13 +139,13 @@ namespace Cosi{
     return bytes;
   }
 
-  char *BytesToHex(const string& bytes) {
-    char *hex = (char*) malloc(bytes.size() * 2) + 1;
+  char *BytesToHex(const unsigned char *bytes, int len) {
+    char *hex = (char*) malloc(len * 2) + 1;
 
-    for (unsigned int i = 0; i < bytes.size(); i++) {
-      sprintf(&hex[i * 2], "%02X", bytes[i]);
+    for (unsigned int i = 0; i < len; i++) {
+      sprintf(&hex[i * 2], "%02x", bytes[i]);
     }
-    hex[2 * bytes.size()] = 0;
+    hex[2 * len] = 0;
     return hex;
   }
 }

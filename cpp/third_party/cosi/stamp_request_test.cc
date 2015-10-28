@@ -13,9 +13,12 @@
 using namespace std;
 
 int main(){
+  const unsigned char bytes[5]={0x00, 0x40, 0x80, 0xc0, 0xff};
+  cout << "Conversion: " << Cosi::BytesToHex(bytes, 5) << "\n";
+
   string test;
   cout << "Requesting signature\n";
-  cout << Cosi::requestSignature("78.46.227.60", 2001, " 0 1 0 0 150FFFFFF56 0 0 0 0 0 0 0 0FFFFFF42FFFF1C14FFFFFFFFFF6FFF2427FF41FF64FFFF4CFFFFFF1B7852FF55" );
+  cout << Cosi::requestSignature("localhost", 2011, " 0 1 0 0 150FFFFFF56 0 0 0 0 0 0 0 0FFFFFF42FFFF1C14FFFFFFFFFF6FFF2427FF41FF64FFFF4CFFFFFF1B7852FF55" );
 
   ct::SignedTreeHead sth;
   sth.set_timestamp(1000);

@@ -382,6 +382,7 @@ func (s *Scanner) Scan(foundCert func(*ct.LogEntry),
 	s.Log(fmt.Sprintf("Completed %d certs in %s", s.certsProcessed, humanTime(int(time.Since(startTime).Seconds()))))
 	s.Log(fmt.Sprintf("Saw %d precerts", s.precertsSeen))
 	s.Log(fmt.Sprintf("%d unparsable entries, %d non-fatal errors", s.unparsableEntries, s.entriesWithNonFatalErrors))
+	s.Log(fmt.Sprintf("STH is: %+v\n", latestSth))
 	return nil
 }
 
