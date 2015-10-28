@@ -18,6 +18,10 @@ import (
 var logUri = flag.String("log_uri", "http://localhost:8888", "CT log base URI")
 var dump = flag.Bool("dump", false, "Dump request to uri")
 
+func init() {
+	flag.IntVar(&dbg.DebugVisible, "debug", dbg.DebugVisible, "0 is silence and 5 is spam")
+}
+
 // Our crypto-suite used in the program
 var suite abstract.Suite
 
@@ -31,26 +35,28 @@ var conf *app.ConfigConode
 func main() {
 	flag.Parse()
 
-  dbg.Print("loguri is ", *logUri)
+	dbg.Lvl2("loguri is ", *logUri)
 	logClient := client.New(*logUri)
 	STH, err := logClient.GetSTH()
 	if err != nil {
 		dbg.Fatal("Couldn't get STH:", err)
 	}
-	dbg.Printf("STH is %+v", STH)
+	dbg.Lvlf2("STH is %+v", STH)
 
 	if *dump {
-		dbg.Print("Dumping STH\n")
+		dbg.Lvl1("Dumping STH\n")
 		ioutil.WriteFile("test_sth_cosi.json", []byte(STH.CosiSignature), 0660)
 		ioutil.WriteFile("test_sth_sha256.json",
 			[]byte(STH.SHA256RootHash.Base64String()), 0660)
 	} else {
 		ReadConf()
-    dbg.DebugVisible = 3
 
 		reply, err := JSONtoSignature(STH.CosiSignature)
-		dbg.Printf("Reply is %+v - error: %s", reply, err)
-		dbg.Printf("SHA256 of STH is %+v", STH.SHA256RootHash)
+		if err != nil{
+			dbg.Fatal("Couldn't convert CosiSignature", err)
+		}
+		dbg.Lvlf2("Reply is %+v", reply)
+		dbg.Lvlf2("SHA256 of STH is %+v", STH.SHA256RootHash)
 		conode.VerifySignature(suite, reply, public, STH.SHA256RootHash[:])
 	}
 }
