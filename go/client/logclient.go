@@ -129,7 +129,6 @@ func (c *LogClient) fetchAndParse(uri string, res interface{}) error {
 	var body []byte
 	if resp != nil {
 		body, err = ioutil.ReadAll(resp.Body)
-		log.Printf("%+v\n", string(body))
 		resp.Body.Close()
 		if err != nil {
 			return err
