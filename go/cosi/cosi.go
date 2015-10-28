@@ -1,22 +1,14 @@
 package main
 
 import (
-	"bytes"
-	"encoding/binary"
 	"encoding/json"
-	"errors"
 	"flag"
-	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 
-	"github.com/dedis/cothority/app/conode/defs"
 	"github.com/dedis/cothority/lib/app"
 	"github.com/dedis/cothority/lib/cliutils"
 	dbg "github.com/dedis/cothority/lib/debug_lvl"
-	"github.com/dedis/cothority/lib/hashid"
-	"github.com/dedis/cothority/lib/proof"
 	"github.com/dedis/crypto/abstract"
 	"github.com/google/certificate-transparency/go/client"
 	"github.com/dedis/cothority/lib/conode"
@@ -54,11 +46,12 @@ func main() {
 			[]byte(STH.SHA256RootHash.Base64String()), 0660)
 	} else {
 		ReadConf()
+    dbg.DebugVisible = 3
 
 		reply, err := JSONtoSignature(STH.CosiSignature)
 		dbg.Printf("Reply is %+v - error: %s", reply, err)
 		dbg.Printf("SHA256 of STH is %+v", STH.SHA256RootHash)
-		conode.VerifySignature(suite, reply, public, STH.SHA256RootHash)
+		conode.VerifySignature(suite, reply, public, STH.SHA256RootHash[:])
 	}
 }
 
