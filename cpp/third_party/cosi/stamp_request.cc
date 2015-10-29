@@ -31,12 +31,12 @@ namespace Cosi{
   #define HOST "127.0.0.1"
   #define PORT 2011
   #define HOST_P "78.46.227.60"
-  #define PORT_P 2011
+  #define PORT_P 2001
 
   string SignTreeHead(ct::SignedTreeHead* sth){
-    cout << "Asking to sign tree head\n";
-    string host = HOST;
-    int port = PORT;
+    VLOG(2) << "Asking to sign tree head\n";
+    string host = HOST_P;
+    int port = PORT_P;
     return requestSignature(host, port, sth->sha256_root_hash());
   }
 
@@ -48,28 +48,26 @@ namespace Cosi{
       return NULL;
     }
 
-    cout << "Binary message " << BytesToHex((const unsigned char*)msg2.c_str(), msg2.length()) << "\n";
     string msg = util::ToBase64(msg2);
-    //string msg = "test";
-    cout << "Sending json with message2: " << msg << "\n";
+    VLOG(2) << "Sending json with message2: " << msg << "\n";
     string request = json_request + msg + json_request_end;
-    cout << "Request is: " << request << "\n";
+    VLOG(3) << "Request is: " << request << "\n";
     if ( writeString(m_sock, request) < 0 ){
-      cout << "Sending error\n";
+      VLOG(1) << "Sending error\n";
       return NULL;
     }
 
-    cout << "Waiting for string\n";
+    VLOG(3) << "Waiting for string\n";
 
     string signature = readString(m_sock);
-    cout << "Got signature " << signature << "\n";
+    VLOG(2) << "Got signature " << signature << "\n";
 
-    cout << "Sending stop\n";
+    VLOG(3) << "Sending stop\n";
     if ( writeString(m_sock, json_close) < 0 ){
       return NULL;
     }
 
-    cout << "Returning signature " << signature << "\n";
+    VLOG(2) << "Returning signature " << signature << "\n";
     return signature;
   }
 
@@ -95,9 +93,9 @@ namespace Cosi{
 
     if ( errno == EAFNOSUPPORT ) return -1;
 
-    cout << "Going to connect to " << host << "\n";
+    VLOG(2) << "Going to connect to " << host << "\n";
     status = ::connect ( m_sock, ( sockaddr * ) &m_addr, sizeof ( m_addr ) );
-    cout << "Connected\n";
+    VLOG(2) << "Connected\n";
 
     if ( status < 0 ){
       return -1;
@@ -110,7 +108,7 @@ namespace Cosi{
 
     if ( status == -1 ){
       int err=errno;
-      cout << strerror(err);
+      VLOG(2) << strerror(err);
       return -1;
     }
     return status;
@@ -125,27 +123,5 @@ namespace Cosi{
       return NULL;
     }
     return buf;
-  }
-
-  char *HexToBytes(const string& hex) {
-    char *bytes = (char*) malloc(hex.size());
-
-    for (unsigned int i = 0; i < hex.length(); i += 2) {
-      string byteString = hex.substr(i, 2);
-      char byte = (char) strtol(byteString.c_str(), NULL, 16);
-      bytes[i / 2] = byte;
-    }
-
-    return bytes;
-  }
-
-  char *BytesToHex(const unsigned char *bytes, int len) {
-    char *hex = (char*) malloc(len * 2) + 1;
-
-    for (unsigned int i = 0; i < len; i++) {
-      sprintf(&hex[i * 2], "%02x", bytes[i]);
-    }
-    hex[2 * len] = 0;
-    return hex;
   }
 }
