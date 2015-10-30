@@ -734,7 +734,6 @@ cpp_third_party_cosi_stamp_request_test_LDADD = \
 	$(libevent_LIBS) \
 	$(leveldb_LIBS) \
 	-lprotobuf -lsqlite3
-
 cpp_third_party_cosi_stamp_request_test_SOURCES = \
 	cpp/third_party/cosi/stamp_request_test.cc \
 	cpp/third_party/cosi/stamp_request.cc \
