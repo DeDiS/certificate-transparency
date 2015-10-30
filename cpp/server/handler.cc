@@ -358,6 +358,7 @@ void HttpHandler::GetSTH(evhttp_request* req) const {
   json_reply.Add("timestamp", sth.timestamp());
   json_reply.AddBase64("sha256_root_hash", sth.sha256_root_hash());
   json_reply.Add("tree_head_signature", sth.signature());
+  json_reply.Add("cosi_signature", sth.cosi_signature());
 
   VLOG(2) << "GetSTH:\n" << json_reply.DebugString();
 

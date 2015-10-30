@@ -16,6 +16,7 @@
 #include "proto/serializer.h"
 #include "util/status.h"
 #include "util/util.h"
+#include "third_party/cosi/stamp_request.h"
 
 
 namespace cert_trans {
@@ -319,6 +320,10 @@ void TreeSigner<Logged>::TimestampAndSign(uint64_t min_timestamp,
   if (ret != LogSigner::OK)
     // Make this one a hard fail. There is really no excuse for it.
     abort();
+
+  // Cosi-extension: ask for a collective signature on our STH
+  sth->set_cosi_signature(Cosi::SignTreeHead(sth));
+  VLOG(1) << "Signing cosi_signature done:" << sth->cosi_signature();
 }
 
 

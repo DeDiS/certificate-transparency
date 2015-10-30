@@ -62,6 +62,7 @@ type getSTHResponse struct {
 	Timestamp         uint64 `json:"timestamp"`           // Time that the tree was created
 	SHA256RootHash    string `json:"sha256_root_hash"`    // Root hash of the tree
 	TreeHeadSignature string `json:"tree_head_signature"` // Log signature for this STH
+	CosiSignature     string `json:"cosi_signature"` 			// Signature of the cosi-nodes
 }
 
 // base64LeafEntry respresents a Base64 encoded leaf entry
@@ -260,6 +261,7 @@ func (c *LogClient) GetSTH() (sth *ct.SignedTreeHead, err error) {
 	sth = &ct.SignedTreeHead{
 		TreeSize:  resp.TreeSize,
 		Timestamp: resp.Timestamp,
+		CosiSignature: resp.CosiSignature,
 	}
 
 	rawRootHash, err := base64.StdEncoding.DecodeString(resp.SHA256RootHash)

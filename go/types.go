@@ -285,6 +285,7 @@ type SignedTreeHead struct {
 	SHA256RootHash    SHA256Hash      `json:"sha256_root_hash"`    // The root hash of the log's Merkle tree
 	TreeHeadSignature DigitallySigned `json:"tree_head_signature"` // The Log's signature for this STH (see RFC section 3.5)
 	LogID             SHA256Hash      `json:"log_id"`              // The SHA256 hash of the log's public key
+	CosiSignature			string					`json:"cosi_signature"`		 // The additional cothority-signature
 }
 
 // SignedCertificateTimestamp represents the structure returned by the
